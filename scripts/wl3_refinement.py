@@ -1,48 +1,80 @@
+# scripts/wl3_refinement.py
+#
+# Minimal Weisfeiler–Leman 3-dimensional refinement.
+# This is intentionally small and explicit (slow but clear),
+# suitable only for small n (≈ 30–50 max).
+#
+# Input graph format:
+#   adj : dict[v] -> set of neighbors
+#
+# Output:
+#   coloring : dict[(i,j,k)] -> color id
+#
+# Also provides wl3_is_homogeneous()
+
 from collections import defaultdict
 
 def wl3_refine(adj, rounds=3):
-    V = list(adj.keys())
-    n = len(V)
-    idx = {v: i for i, v in enumerate(V)}
+    vertices = list(adj.keys())
+    n = len(vertices)
 
-    colors = {(i, j, k): 0 for i in range(n) for j in range(n) for k in range(n)}
+    # index vertices for tuples
+    idx = {v: i for i, v in enumerate(vertices)}
+    inv = {i: v for v, i in idx.items()}
 
+    # initial coloring: equality pattern + adjacency pattern
+    color = {}
+    next_color = {}
+    palette = {}
+
+    def base_color(i, j, k):
+        vi, vj, vk = inv[i], inv[j], inv[k]
+        eq = (i == j, j == k, i == k)
+        adjp = (
+            vj in adj[vi],
+            vk in adj[vi],
+            vk in adj[vj],
+        )
+        return (eq, adjp)
+
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                color[(i, j, k)] = base_color(i, j, k)
+
+    # iterative refinement
     for _ in range(rounds):
-        sigs = {}
+        palette.clear()
+        next_color.clear()
+        cid = 0
+
         for i in range(n):
             for j in range(n):
                 for k in range(n):
-                    vi, vj, vk = V[i], V[j], V[k]
-                    neigh_i = [idx[u] for u in adj[vi]]
-                    neigh_j = [idx[u] for u in adj[vj]]
-                    neigh_k = [idx[u] for u in adj[vk]]
+                    sig = [
+                        color[(i, j, k)]
+                    ]
 
-                    bag = []
-                    for a in neigh_i:
-                        bag.append(colors[(a, j, k)])
-                    for b in neigh_j:
-                        bag.append(colors[(i, b, k)])
-                    for c in neigh_k:
-                        bag.append(colors[(i, j, c)])
+                    # substitute one coordinate at a time
+                    for t in range(n):
+                        sig.append(color[(t, j, k)])
+                        sig.append(color[(i, t, k)])
+                        sig.append(color[(i, j, t)])
 
-                    sigs[(i, j, k)] = (
-                        colors[(i, j, k)],
-                        tuple(sorted(bag))
-                    )
+                    sig = tuple(sig)
 
-        canon = {}
-        next_id = 0
-        for key in sorted(sigs.keys()):
-            s = sigs[key]
-            if s not in canon:
-                canon[s] = next_id
-                next_id += 1
+                    if sig not in palette:
+                        palette[sig] = cid
+                        cid += 1
 
-        colors = {k: canon[sigs[k]] for k in sigs}
+                    next_color[(i, j, k)] = palette[sig]
 
-    return colors
+        color, next_color = next_color, color
+
+    return color
 
 
-def wl3_is_homogeneous(colors):
-    return len(set(colors.values())) == 1
+def wl3_is_homogeneous(coloring):
+    vals = set(coloring.values())
+    return len(vals) == 1
 

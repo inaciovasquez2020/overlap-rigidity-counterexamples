@@ -1,94 +1,97 @@
-# local_cycle_rank.py
-# Local cycle-rank proxy for bounded-radius neighborhoods.
-# Graph format: adjacency dict {v: set(neighbors)}
+# scripts/local_cycle_rank.py
+#
+# Local cycle-rank / overlap proxies for bounded-radius neighborhoods.
+# These are intentionally simple, FO-local, and computable on small graphs.
+#
+# Graph format: adj : dict[v] -> set of neighbors
 
-from collections import deque
+from collections import deque, defaultdict
 
 def bfs_ball(adj, root, R):
     """
-    Return induced subgraph on vertices within distance <= R of root.
+    Return the induced subgraph on the radius-R ball around root.
     """
-    dist = {root: 0}
+    visited = {root: 0}
     q = deque([root])
+
     while q:
-        v = q.popleft()
-        if dist[v] == R:
+        u = q.popleft()
+        if visited[u] == R:
             continue
-        for u in adj[v]:
-            if u not in dist:
-                dist[u] = dist[v] + 1
-                q.append(u)
-    verts = set(dist.keys())
-    sub = {v: set(adj[v]) & verts for v in verts}
+        for v in adj[u]:
+            if v not in visited:
+                visited[v] = visited[u] + 1
+                q.append(v)
+
+    ball = set(visited.keys())
+    sub = {v: set() for v in ball}
+    for v in ball:
+        for w in adj[v]:
+            if w in ball:
+                sub[v].add(w)
     return sub
+
 
 def count_edges(adj):
     """
-    Count undirected edges in adjacency dict.
+    Number of undirected edges.
     """
     return sum(len(adj[v]) for v in adj) // 2
 
-def connected_components(adj):
-    """
-    Number of connected components.
-    """
-    seen = set()
-    comps = 0
-    for v in adj:
-        if v in seen:
-            continue
-        comps += 1
-        stack = [v]
-        seen.add(v)
-        while stack:
-            x = stack.pop()
-            for y in adj[x]:
-                if y not in seen:
-                    seen.add(y)
-                    stack.append(y)
-    return comps
+
+def count_vertices(adj):
+    return len(adj)
+
 
 def cycle_rank(adj):
     """
-    Cycle rank = E - V + C (cyclomatic number).
+    Cycle rank = |E| - |V| + c,
+    where c is number of connected components.
     """
-    V = len(adj)
-    if V == 0:
-        return 0
-    E = count_edges(adj)
-    C = connected_components(adj)
-    return E - V + C
+    visited = set()
+    comps = 0
+
+    for v in adj:
+        if v not in visited:
+            comps += 1
+            q = deque([v])
+            visited.add(v)
+            while q:
+                u = q.popleft()
+                for w in adj[u]:
+                    if w not in visited:
+                        visited.add(w)
+                        q.append(w)
+
+    return count_edges(adj) - count_vertices(adj) + comps
+
 
 def local_cycle_rank(adj, R):
     """
-    Max cycle rank over all radius-R balls.
+    Maximum cycle rank over all radius-R balls.
     """
-    max_rank = 0
-    for v in adj:
-        ball = bfs_ball(adj, v, R)
-        r = cycle_rank(ball)
-        if r > max_rank:
-            max_rank = r
-    return max_rank
+    return max(cycle_rank(bfs_ball(adj, v, R)) for v in adj)
 
-def local_cycle_rank_profile(adj, R):
-    """
-    Return dict v -> cycle_rank(ball(v,R)).
-    """
-    prof = {}
-    for v in adj:
-        ball = bfs_ball(adj, v, R)
-        prof[v] = cycle_rank(ball)
-    return prof
 
-if __name__ == "__main__":
-    # sanity check: cycle C4
-    adj = {
-        0: {1, 3},
-        1: {0, 2},
-        2: {1, 3},
-        3: {0, 2},
-    }
-    print("local cycle rank R=1:", local_cycle_rank(adj, 1))
-    print("local cycle rank R=2:", local_cycle_rank(adj, 2))
+def local_short_cycles(adj, max_len=6):
+    """
+    Count short cycles through each vertex up to length max_len.
+    Very naive DFS-based enumeration; small graphs only.
+    """
+    def dfs(start, u, depth, visited):
+        if depth == 0:
+            return 1 if start in adj[u] else 0
+        cnt = 0
+        for v in adj[u]:
+            if v not in visited:
+                cnt += dfs(start, v, depth - 1, visited | {v})
+        return cnt
+
+    per_v = {}
+    for v in adj:
+        total = 0
+        for ell in range(3, max_len + 1):
+            total += dfs(v, v, ell - 1, {v})
+        per_v[v] = total // 2  # undirected correction
+    return per_v
 
