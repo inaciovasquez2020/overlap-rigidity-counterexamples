@@ -1,0 +1,6 @@
+cycle R= 1 FO4_hom= False
+star  R= 1 FO4_hom= False
+cycle R= 2 FO4_hom= False
+star  R= 2 FO4_hom= False
+cycle R= 3 FO4_hom= False
+star  R= 3 FO4_hom= False
