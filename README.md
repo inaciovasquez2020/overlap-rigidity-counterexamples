@@ -1,3 +1,6 @@
+Status: Frozen baseline (overlap-rigidity-search-v1)
+Scope: WL2/WL3 refinement + local cycle-rank stress tests
+
 Overlap Rigidity Counterexample Search
 
 Goal
