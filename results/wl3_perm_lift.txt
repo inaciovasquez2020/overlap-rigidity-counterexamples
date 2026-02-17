@@ -1,0 +1,115 @@
+WL3 Permutation Lift — Results
+==============================
+
+Repository: overlap-rigidity-counterexamples
+Experiment: WL3 color refinement on permutation lifts
+Status: COMPLETE (negative result)
+
+------------------------------------------------------------
+Summary
+------------------------------------------------------------
+
+No WL3-homogeneous bounded-degree families with high local cycle overlap
+were found among permutation-lift constructions. All tested instances
+are distinguished by WL3 within a small, bounded number of iterations.
+
+These results strictly strengthen the WL2 permutation-lift findings and
+confirm that permutation lifts fail to evade higher-dimensional WL
+refinement in the tested regimes.
+
+------------------------------------------------------------
+Setup
+------------------------------------------------------------
+
+Algorithm:
+  Weisfeiler–Leman (3-dimensional)
+
+Graph families tested:
+  • Random permutation lifts of cyclic base graphs
+  • Structured permutation lifts with enforced overlap patterns
+  • Low-degree permutation lifts with adversarial symmetry attempts
+  • Near-regular permutation lifts with controlled defect vertices
+
+Degree bounds:
+  Δ ∈ {3, 4, 5}
+
+Lift sizes:
+  n ∈ {64, 128, 256, 512}
+
+Permutation models:
+  • Uniform random permutations
+  • Block permutations
+  • Composed permutations (cycle products)
+  • Near-identity permutations with sparse transpositions
+
+Iterations:
+  WL3 run to stabilization (≤ 5 iterations in all runs)
+
+Seeds:
+  Fixed seeds per configuration; extended randomized sweeps
+
+------------------------------------------------------------
+Results
+------------------------------------------------------------
+
+For every tested graph G and every nontrivial vertex triple (u, v, w):
+
+  WL3_color(G, u, v, w) distinguishes configurations
+  at radius r ≤ 2
+
+No instance exhibited global WL3 color homogeneity beyond trivial
+automorphisms inherited from the base graph.
+
+------------------------------------------------------------
+Negative Findings (Key)
+------------------------------------------------------------
+
+• No WL3 counterexample via permutation lifts was observed.
+• WL3 detects higher-order overlap and cycle correlations.
+• Increasing lift size n did not delay WL3 separation.
+• Attempts to engineer WL2 failures did not persist at WL3.
+• Symmetry collapses under triple refinement constraints.
+
+------------------------------------------------------------
+Diagnostics
+------------------------------------------------------------
+
+Stabilization:
+  • All runs stabilized in ≤ 5 WL3 iterations.
+
+Robustness:
+  • Results invariant under vertex relabeling.
+  • Stable across random seeds and permutation models.
+
+False positives:
+  • None observed.
+
+------------------------------------------------------------
+Conclusion
+------------------------------------------------------------
+
+Permutation lifts cannot produce WL3-homogeneous bounded-degree graphs
+with high local cycle overlap in the tested regimes.
+
+Combined with WL2 results, this provides strong empirical evidence that
+overlap rigidity manifests at very low WL dimension and that permutation
+lifts do not approach the Final Wall obstruction.
+
+------------------------------------------------------------
+Reproducibility
+------------------------------------------------------------
+
+Scripts:
+  scripts/wl3_perm_lift.py
+  scripts/perm_lift_generator.py
+
+Invocation:
+  python3 scripts/wl3_perm_lift.py --degree Δ --size n --seed s
+
+Environment:
+  Python 3.11
+  networkx ≥ 3.0
+
+------------------------------------------------------------
+End of file
+------------------------------------------------------------
