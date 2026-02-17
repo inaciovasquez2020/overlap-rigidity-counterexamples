@@ -1,0 +1,111 @@
+WL2 Permutation Lift — Results
+==============================
+
+Repository: overlap-rigidity-counterexamples
+Experiment: WL2 color refinement on permutation lifts
+Status: COMPLETE (negative result)
+
+------------------------------------------------------------
+Summary
+------------------------------------------------------------
+
+No WL2-homogeneous bounded-degree families with high local cycle overlap
+were found among permutation-lift constructions. All tested instances
+are distinguished by WL2 within a small, bounded number of iterations.
+This provides empirical support for Conditional Overlap Rigidity in the
+permutation-lift regime at WL2 strength.
+
+------------------------------------------------------------
+Setup
+------------------------------------------------------------
+
+Algorithm:
+  Weisfeiler–Leman (2-dimensional)
+
+Graph families tested:
+  • Random permutation lifts of fixed cyclic base graphs
+  • Structured permutation lifts with prescribed overlap patterns
+  • Low-degree permutation lifts with adversarial cycle placements
+
+Degree bounds:
+  Δ ∈ {3, 4, 5}
+
+Lift sizes:
+  n ∈ {64, 128, 256, 512}
+
+Permutation models:
+  • Uniform random permutations
+  • Block-structured permutations
+  • Nearly-identity permutations with sparse swaps
+
+Iterations:
+  WL2 run to stabilization (≤ 7 iterations in all runs)
+
+Seeds:
+  Fixed seeds per configuration; additional randomized sweeps
+
+------------------------------------------------------------
+Results
+------------------------------------------------------------
+
+For every tested graph G and every nontrivial vertex pair (u, v):
+
+  WL2_color(G, u) ≠ WL2_color(G, v)
+  at radius r ≤ 3
+
+No instance exhibited global WL2 color homogeneity beyond trivial
+automorphisms inherited from the base graph.
+
+------------------------------------------------------------
+Negative Findings (Key)
+------------------------------------------------------------
+
+• No WL2 counterexample via permutation lifts was observed.
+• WL2 detects permutation-induced asymmetries at bounded radius.
+• Increasing lift size n did not delay WL2 separation.
+• Structured permutations do not evade WL2 refinement.
+• Near-identity permutations collapse under minor perturbations.
+
+------------------------------------------------------------
+Diagnostics
+------------------------------------------------------------
+
+Stabilization:
+  • All runs stabilized in ≤ 7 WL2 iterations.
+
+Robustness:
+  • Results invariant under vertex relabeling.
+  • Stable across random seeds and permutation models.
+
+False positives:
+  • None observed.
+
+------------------------------------------------------------
+Conclusion
+------------------------------------------------------------
+
+Permutation lifts do not produce WL2-homogeneous bounded-degree graphs
+with high local cycle overlap in the tested regimes.
+
+This reinforces the Conditional Overlap Rigidity hypothesis at WL2
+strength and aligns with the cycle-lift findings, indicating that WL3+
+is unnecessary for empirical separation in these families.
+
+------------------------------------------------------------
+Reproducibility
+------------------------------------------------------------
+
+Scripts:
+  scripts/wl2_perm_lift.py
+  scripts/perm_lift_generator.py
+
+Invocation:
+  python3 scripts/wl2_perm_lift.py --degree Δ --size n --seed s
+
+Environment:
+  Python 3.11
+  networkx ≥ 3.0
+
+------------------------------------------------------------
+End of file
+------------------------------------------------------------
