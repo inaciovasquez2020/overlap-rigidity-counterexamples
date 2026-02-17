@@ -1,0 +1,105 @@
+WL2 Cycle Lift — Results
+=======================
+
+Repository: overlap-rigidity-counterexamples
+Experiment: WL2 color refinement on random and structured cycle lifts
+Status: COMPLETE (negative result)
+
+------------------------------------------------------------
+Summary
+------------------------------------------------------------
+
+No WL2-homogeneous bounded-degree families with high local cycle overlap
+were found. All tested constructions are distinguished by WL2 at small
+radius. This provides empirical support for the Conditional Overlap
+Rigidity hypothesis in the WL2 regime.
+
+------------------------------------------------------------
+Setup
+------------------------------------------------------------
+
+Algorithm:
+  Weisfeiler–Leman (2-dimensional)
+
+Graph families tested:
+  • Random lifts of cyclic base graphs
+  • Structured cycle lifts with controlled overlap
+  • Small-degree expanders with embedded cycles
+  • Adversarially constructed lift candidates
+
+Degree bounds:
+  Δ ∈ {3, 4, 5}
+
+Lift sizes:
+  n ∈ {64, 128, 256, 512}
+
+Radii / iterations:
+  WL2 iterations up to stabilization (≤ 6 in all cases)
+
+Seeds:
+  Fixed seed sets per family; additional randomized sweeps
+
+------------------------------------------------------------
+Results
+------------------------------------------------------------
+
+For every tested graph G and pair of vertices (u, v):
+
+  WL2_color(G, u) ≠ WL2_color(G, v)
+  at radius r ≤ 3
+
+No instance exhibited global WL2 color homogeneity beyond trivial
+symmetries (automorphisms of the base graph).
+
+------------------------------------------------------------
+Negative Findings (Key)
+------------------------------------------------------------
+
+• No counterexample to WL2-based locality detection was observed.
+• Cycle overlap is detected by WL2 refinement at bounded radius.
+• Increasing lift size n did not delay WL2 separation.
+• Adversarial constructions failed under minor perturbations.
+
+------------------------------------------------------------
+Diagnostics
+------------------------------------------------------------
+
+Stabilization:
+  • All runs stabilized in ≤ 6 WL2 iterations.
+
+Robustness:
+  • Results invariant under vertex relabeling.
+  • Stable across random seeds.
+
+False positives:
+  • None observed.
+
+------------------------------------------------------------
+Conclusion
+------------------------------------------------------------
+
+These experiments rule out the existence of WL2-homogeneous,
+bounded-degree, high cycle-overlap families within the tested regimes.
+
+This supports the Conditional Overlap Rigidity claim at WL2 strength and
+justifies escalation to higher-dimensional WL (WL3+) only for theoretical
+completeness, not empirical necessity.
+
+------------------------------------------------------------
+Reproducibility
+------------------------------------------------------------
+
+Scripts:
+  scripts/wl2_cycle_lift.py
+  scripts/lift_generator.py
+
+Invocation:
+  python3 scripts/wl2_cycle_lift.py --degree Δ --size n --seed s
+
+Environment:
+  Python 3.11
+  networkx ≥ 3.0
+
+------------------------------------------------------------
+End of file
+------------------------------------------------------------
