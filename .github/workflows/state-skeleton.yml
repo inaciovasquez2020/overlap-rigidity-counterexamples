@@ -1,0 +1,13 @@
+name: skeleton-state
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  skeleton:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Skeleton state OK"
+

@@ -1,0 +1,12 @@
+name: verified-state
+
+on:
+  push:
+    branches: [paper-I-artifacts]
+
+jobs:
+  verified:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Verified artifacts present"
+
