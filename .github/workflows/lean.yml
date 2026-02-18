@@ -1,0 +1,59 @@
+name: lean
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lean-toolchain"
+      - "urf-core/**"
+      - "urf-axioms/**"
+      - "urf-spine/**"
+      - "urf-prefab-system/**"
+      - "flagship-lean/**"
+      - ".github/workflows/lean.yml"
+  pull_request:
+    paths:
+      - "lean-toolchain"
+      - "urf-core/**"
+      - "urf-axioms/**"
+      - "urf-spine/**"
+      - "urf-prefab-system/**"
+      - "flagship-lean/**"
+      - ".github/workflows/lean.yml"
+
+jobs:
+  lean:
+    # Gate: only run when real artifacts exist
+    if: |
+      exists('lean-toolchain') ||
+      exists('proofs') ||
+      exists('certs') ||
+      exists('artifacts')
+
+    runs-on: ubuntu-latest
+
+    env:
+      # Force offline / GitHub-only elan resolution
+      ELAN_DIST_SERVER: https://github.com/leanprover/elan/releases/download
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Lean build
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: true
+          build: default
+          test: default
+          lint: default
+          mk_all-check: false
+          check-reservoir-eligibility: false
+          lean4checker: false
+
+          # IMPORTANT: cache + network safety
+          use-github-cache: true
+          use-mathlib-cache: false
+          reinstall-transient-toolchain: false
+          lake-package-directory: .
+
