@@ -1,2 +1,7 @@
 .venv/
 *.minisig
+
+*.aux
+*.log
+*.out
+*.pdf
